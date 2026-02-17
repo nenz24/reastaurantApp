@@ -19,9 +19,9 @@ class DetailMenuSection extends StatelessWidget {
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         SizedBox(
@@ -50,14 +50,21 @@ class DetailMenuSection extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(icon, size: 36, color: Theme.of(context).colorScheme.primary),
+                    Icon(
+                      icon,
+                      size: 36,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     const SizedBox(height: 12),
                     Text(
                       item.name,
                       maxLines: 2,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                 ),

@@ -32,9 +32,7 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            // Custom Cupertino-style Header
             SliverToBoxAdapter(child: const HomeHeader()),
-            // List Content
             Consumer<RestaurantListProvider>(
               builder: (context, provider, child) {
                 final state = provider.state;

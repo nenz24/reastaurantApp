@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:readmore/readmore.dart';
 import 'package:provider/provider.dart';
 import '../models/api_state.dart';
 import '../providers/restaurant_detail_provider.dart';
+import '../providers/favorite_provider.dart';
 import '../widgets/error_view.dart';
 import '../widgets/review_card.dart';
 import '../widgets/review_form.dart';
@@ -29,9 +31,9 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
     super.initState();
     Future.microtask(() {
       if (mounted) {
-        context
-            .read<RestaurantDetailProvider>()
-            .fetchRestaurantDetail(widget.restaurantId);
+        context.read<RestaurantDetailProvider>().fetchRestaurantDetail(
+          widget.restaurantId,
+        );
       }
     });
   }
@@ -44,42 +46,31 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Consumer<RestaurantDetailProvider>(
-          builder: (context, provider, child) {
-            return ReviewForm(
-              isSubmitting: provider.isSubmittingReview,
-              onSubmit: (name, review) async {
-                final messenger = ScaffoldMessenger.of(context);
-                final success = await provider.addReview(
-                  id: widget.restaurantId,
-                  name: name,
-                  review: review,
-                );
+      builder: (context) => Consumer<RestaurantDetailProvider>(
+        builder: (context, provider, child) {
+          return ReviewForm(
+            isSubmitting: provider.isSubmittingReview,
+            errorMessage: provider.reviewError,
+            onSubmit: (name, review) async {
+              final messenger = ScaffoldMessenger.of(context);
+              final success = await provider.addReview(
+                id: widget.restaurantId,
+                name: name,
+                review: review,
+              );
 
-                if (mounted && success) {
-                  messenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('Review submitted successfully!'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                } else if (mounted && !success) {
-                  messenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed to submit review'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-                return success;
-              },
-            );
-          },
-        ),
+              if (mounted && success) {
+                messenger.showSnackBar(
+                  const SnackBar(
+                    content: Text('Review submitted successfully!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+              return success;
+            },
+          );
+        },
       ),
     );
   }
@@ -104,7 +95,8 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                     height: 300,
                     color: Colors.grey[300],
                     child: const Center(
-                        child: Icon(Icons.broken_image, size: 50)),
+                      child: Icon(Icons.broken_image, size: 50),
+                    ),
                   ),
                 ),
               ),
@@ -117,6 +109,29 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () => Navigator.pop(context),
                   ),
+                ),
+              ),
+              Positioned(
+                top: 40,
+                right: 16,
+                child: Consumer<FavoriteProvider>(
+                  builder: (context, favoriteProvider, child) {
+                    final isFav = favoriteProvider.isFavorite(restaurant.id);
+                    return CircleAvatar(
+                      backgroundColor: Colors.black.withValues(alpha: 0.5),
+                      child: IconButton(
+                        icon: Icon(
+                          isFav
+                              ? CupertinoIcons.heart_fill
+                              : CupertinoIcons.heart,
+                          color: isFav ? Colors.redAccent : Colors.white,
+                        ),
+                        onPressed: () {
+                          favoriteProvider.addFavoriteFromDetail(restaurant);
+                        },
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -137,21 +152,24 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.accent.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.star,
-                              color: AppColors.accent, size: 20),
+                          const Icon(
+                            Icons.star,
+                            color: AppColors.accent,
+                            size: 20,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             restaurant.rating.toString(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
+                            style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(
                                   color: AppColors.accent,
                                   fontWeight: FontWeight.bold,
@@ -171,11 +189,13 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                       size: 20,
                     ),
                     const SizedBox(width: 4),
-                    Text(
-                      '${restaurant.address}, ${restaurant.city}',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
+                    Expanded(
+                      child: Text(
+                        '${restaurant.address}, ${restaurant.city}',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -186,7 +206,9 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                   children: restaurant.categories.map<Widget>((category) {
                     return Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
@@ -202,8 +224,13 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                   }).toList(),
                 ),
                 const SizedBox(height: 24),
-                Text(
+                ReadMoreText(
                   restaurant.description,
+                  trimLines: 3,
+                  trimMode: TrimMode.Line,
+                  trimCollapsedText: 'Read more',
+                  trimExpandedText: 'Show less',
+                  colorClickableText: Theme.of(context).colorScheme.primary,
                   style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.justify,
                 ),
@@ -226,8 +253,8 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                     Text(
                       'Reviews',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     TextButton.icon(
                       onPressed: () => _showReviewForm(context),
@@ -254,33 +281,29 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
           return switch (state) {
             Loading() => const Center(child: CupertinoActivityIndicator()),
             Success(data: final restaurant) => CustomScrollView(
-                slivers: [
-                  _buildHeader(context, restaurant),
-                  SliverPadding(
-                    padding: const EdgeInsets.only(bottom: 24),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final review = restaurant.customerReviews[index];
-                          return ReviewCard(review: review);
-                        },
-                        childCount: restaurant.customerReviews.length,
-                      ),
-                    ),
+              slivers: [
+                _buildHeader(context, restaurant),
+                SliverPadding(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final review = restaurant.customerReviews[index];
+                      return ReviewCard(review: review);
+                    }, childCount: restaurant.customerReviews.length),
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
             Error(message: final message) => Center(
-                  child: ErrorView(
+              child: ErrorView(
                 message: message,
-                onRetry: () => provider
-                    .fetchRestaurantDetail(widget.restaurantId),
-              )),
+                onRetry: () =>
+                    provider.fetchRestaurantDetail(widget.restaurantId),
+              ),
+            ),
           };
         },
       ),
     );
   }
 }
-
-

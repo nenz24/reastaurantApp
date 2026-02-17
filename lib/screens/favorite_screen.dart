@@ -20,13 +20,19 @@ class FavoriteScreen extends StatelessWidget {
                 child: Text(
                   'My Favorites',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
             Consumer<FavoriteProvider>(
               builder: (context, provider, child) {
+                if (provider.isLoading) {
+                  return const SliverFillRemaining(
+                    child: Center(child: CupertinoActivityIndicator()),
+                  );
+                }
+
                 final favorites = provider.favorites;
 
                 if (favorites.isEmpty) {
@@ -43,7 +49,16 @@ class FavoriteScreen extends StatelessWidget {
                           const SizedBox(height: 16),
                           Text(
                             'No favorites yet',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: Theme.of(context).disabledColor,
+                                ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Tap the heart icon to add restaurants',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
                                   color: Theme.of(context).disabledColor,
                                 ),
                           ),
@@ -54,27 +69,24 @@ class FavoriteScreen extends StatelessWidget {
                 }
 
                 return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final restaurant = favorites[index];
-                      return RestaurantCard(
-                        restaurant: restaurant,
-                        heroTag: 'favorite-${restaurant.id}',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RestaurantDetailScreen(
-                                restaurantId: restaurant.id,
-                                heroTag: 'favorite-${restaurant.id}',
-                              ),
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final restaurant = favorites[index];
+                    return RestaurantCard(
+                      restaurant: restaurant,
+                      heroTag: 'favorite-${restaurant.id}',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RestaurantDetailScreen(
+                              restaurantId: restaurant.id,
+                              heroTag: 'favorite-${restaurant.id}',
                             ),
-                          );
-                        },
-                      );
-                    },
-                    childCount: favorites.length,
-                  ),
+                          ),
+                        );
+                      },
+                    );
+                  }, childCount: favorites.length),
                 );
               },
             ),

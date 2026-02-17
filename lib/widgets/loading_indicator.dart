@@ -15,10 +15,7 @@ class LoadingIndicator extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            'Loading...',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          Text('Loading...', style: Theme.of(context).textTheme.bodyMedium),
         ],
       ),
     );

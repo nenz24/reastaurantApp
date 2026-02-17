@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import '../models/api_state.dart';
 import '../models/restaurant.dart';
 import '../services/restaurant_api_service.dart';
 
 class RestaurantDetailProvider extends ChangeNotifier {
   final RestaurantApiService _apiService = RestaurantApiService();
-  
+
   ApiState<RestaurantDetail> _state = const Loading();
   ApiState<RestaurantDetail> get state => _state;
 
   bool _isSubmittingReview = false;
   bool get isSubmittingReview => _isSubmittingReview;
+
+  String? _reviewError;
+  String? get reviewError => _reviewError;
+
+  void clearReviewError() {
+    _reviewError = null;
+    notifyListeners();
+  }
 
   Future<void> fetchRestaurantDetail(String id) async {
     _state = const Loading();
@@ -19,8 +28,10 @@ class RestaurantDetailProvider extends ChangeNotifier {
     try {
       final restaurant = await _apiService.getRestaurantDetail(id);
       _state = Success(restaurant);
+    } on SocketException {
+      _state = const Error('No Internet connection');
     } catch (e) {
-      _state = Error(e.toString());
+      _state = const Error('Failed to load restaurant details');
     }
     notifyListeners();
   }
@@ -31,6 +42,7 @@ class RestaurantDetailProvider extends ChangeNotifier {
     required String review,
   }) async {
     _isSubmittingReview = true;
+    _reviewError = null;
     notifyListeners();
 
     try {
@@ -39,17 +51,24 @@ class RestaurantDetailProvider extends ChangeNotifier {
         name: name,
         review: review,
       );
-      
+
       if (success) {
-        // Refresh detail to get updated reviews
         await fetchRestaurantDetail(id);
+      } else {
+        _reviewError = 'Failed to submit review. Please try again.';
       }
-      
+
       _isSubmittingReview = false;
       notifyListeners();
       return success;
+    } on SocketException {
+      _isSubmittingReview = false;
+      _reviewError = 'No Internet connection';
+      notifyListeners();
+      return false;
     } catch (e) {
       _isSubmittingReview = false;
+      _reviewError = 'Failed to submit review';
       notifyListeners();
       return false;
     }

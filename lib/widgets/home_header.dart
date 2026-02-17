@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
-import '../providers/theme_provider.dart';
 import '../screens/search_screen.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -22,54 +20,32 @@ class HomeHeader extends StatelessWidget {
                 Text(
                   'Restaurant',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Recommendation restaurant for you!',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
               ],
             ),
           ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SearchScreen(),
-                    ),
-                  );
-                },
-                icon: Icon(
-                  CupertinoIcons.search,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 28,
-                ),
-              ),
-              Consumer<ThemeProvider>(
-                builder: (context, themeProvider, child) {
-                  return IconButton(
-                    onPressed: () {
-                      themeProvider.toggleTheme();
-                    },
-                    icon: Icon(
-                      themeProvider.isDarkMode
-                          ? CupertinoIcons.moon_fill
-                          : CupertinoIcons.sun_max_fill,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 28,
-                    ),
-                  );
-                },
-              ),
-            ],
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchScreen()),
+              );
+            },
+            icon: Icon(
+              CupertinoIcons.search,
+              color: Theme.of(context).colorScheme.primary,
+              size: 28,
+            ),
           ),
         ],
       ),

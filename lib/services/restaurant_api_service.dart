@@ -5,9 +5,14 @@ import '../models/restaurant.dart';
 class RestaurantApiService {
   static const String _baseUrl = 'https://restaurant-api.dicoding.dev';
 
+  final http.Client _client;
+
+  RestaurantApiService({http.Client? client})
+    : _client = client ?? http.Client();
+
   Future<List<Restaurant>> getRestaurantList() async {
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/list'));
+      final response = await _client.get(Uri.parse('$_baseUrl/list'));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
@@ -18,7 +23,8 @@ class RestaurantApiService {
             .toList();
       } else {
         throw Exception(
-            'Failed to load restaurants. Status: ${response.statusCode}');
+          'Failed to load restaurants. Status: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Error loading restaurants: $e');
@@ -27,7 +33,7 @@ class RestaurantApiService {
 
   Future<RestaurantDetail> getRestaurantDetail(String id) async {
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/detail/$id'));
+      final response = await _client.get(Uri.parse('$_baseUrl/detail/$id'));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
@@ -36,7 +42,8 @@ class RestaurantApiService {
         return RestaurantDetail.fromJson(restaurantJson);
       } else {
         throw Exception(
-            'Failed to load restaurant detail. Status: ${response.statusCode}');
+          'Failed to load restaurant detail. Status: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Error loading restaurant detail: $e');
@@ -45,8 +52,9 @@ class RestaurantApiService {
 
   Future<List<Restaurant>> searchRestaurant(String query) async {
     try {
-      final response =
-          await http.get(Uri.parse('$_baseUrl/search?q=$query'));
+      final response = await _client.get(
+        Uri.parse('$_baseUrl/search?q=$query'),
+      );
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
@@ -57,7 +65,8 @@ class RestaurantApiService {
             .toList();
       } else {
         throw Exception(
-            'Failed to search restaurants. Status: ${response.statusCode}');
+          'Failed to search restaurants. Status: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Error searching restaurants: $e');
@@ -70,22 +79,17 @@ class RestaurantApiService {
     required String review,
   }) async {
     try {
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('$_baseUrl/review'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'id': id,
-          'name': name,
-          'review': review,
-        }),
+        body: json.encode({'id': id, 'name': name, 'review': review}),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final Map<String, dynamic> data = json.decode(response.body);
         return data['error'] == false;
       } else {
-        throw Exception(
-            'Failed to add review. Status: ${response.statusCode}');
+        throw Exception('Failed to add review. Status: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Error adding review: $e');

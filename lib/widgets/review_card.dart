@@ -4,10 +4,7 @@ import '../models/restaurant.dart';
 class ReviewCard extends StatelessWidget {
   final CustomerReview review;
 
-  const ReviewCard({
-    super.key,
-    required this.review,
-  });
+  const ReviewCard({super.key, required this.review});
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +46,7 @@ class ReviewCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            Text(
-              review.review,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            Text(review.review, style: Theme.of(context).textTheme.bodyMedium),
           ],
         ),
       ),

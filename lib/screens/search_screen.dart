@@ -60,15 +60,17 @@ class _SearchScreenState extends State<SearchScreen> {
               onChanged: _onSearchChanged,
               decoration: InputDecoration(
                 hintText: 'Search restaurants...',
-                hintStyle: TextStyle(
+                hintStyle: TextStyle(color: Theme.of(context).disabledColor),
+                prefixIcon: Icon(
+                  CupertinoIcons.search,
                   color: Theme.of(context).disabledColor,
                 ),
-                prefixIcon: Icon(CupertinoIcons.search,
-                    color: Theme.of(context).disabledColor),
                 filled: true,
                 fillColor: Theme.of(context).cardColor,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -96,54 +98,58 @@ class _SearchScreenState extends State<SearchScreen> {
                 final state = provider.state;
 
                 return switch (state) {
-                  Loading() => const Center(child: CupertinoActivityIndicator()),
-                  Success(data: final restaurants) => restaurants.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                CupertinoIcons.search,
-                                size: 64,
-                                color: Theme.of(context).disabledColor,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'No restaurants found',
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      color: Theme.of(context).disabledColor,
+                  Loading() => const Center(
+                    child: CupertinoActivityIndicator(),
+                  ),
+                  Success(data: final restaurants) =>
+                    restaurants.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  CupertinoIcons.search,
+                                  size: 64,
+                                  color: Theme.of(context).disabledColor,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No restaurants found',
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(
+                                        color: Theme.of(context).disabledColor,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: restaurants.length,
+                            padding: const EdgeInsets.only(bottom: 20),
+                            itemBuilder: (context, index) {
+                              final restaurant = restaurants[index];
+                              return RestaurantCard(
+                                restaurant: restaurant,
+                                heroTag: 'search-${restaurant.id}',
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          RestaurantDetailScreen(
+                                            restaurantId: restaurant.id,
+                                            heroTag: 'search-${restaurant.id}',
+                                          ),
                                     ),
-                              ),
-                            ],
+                                  );
+                                },
+                              );
+                            },
                           ),
-                        )
-                      : ListView.builder(
-                          itemCount: restaurants.length,
-                          padding: const EdgeInsets.only(bottom: 20),
-                          itemBuilder: (context, index) {
-                            final restaurant = restaurants[index];
-                            return RestaurantCard(
-                              restaurant: restaurant,
-                              heroTag: 'search-${restaurant.id}',
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        RestaurantDetailScreen(
-                                      restaurantId: restaurant.id,
-                                      heroTag: 'search-${restaurant.id}',
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
                   Error(message: final message) => ErrorView(
-                      message: message,
-                      onRetry: () => provider.searchRestaurants(provider.query),
-                    ),
+                    message: message,
+                    onRetry: () => provider.searchRestaurants(provider.query),
+                  ),
                 };
               },
             ),

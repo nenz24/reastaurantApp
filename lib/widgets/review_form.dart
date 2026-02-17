@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class ReviewForm extends StatefulWidget {
   final Future<bool> Function(String name, String review) onSubmit;
   final bool isSubmitting;
+  final String? errorMessage;
 
   const ReviewForm({
     super.key,
     required this.onSubmit,
     required this.isSubmitting,
+    this.errorMessage,
   });
 
   @override
@@ -50,62 +52,74 @@ class _ReviewFormState extends State<ReviewForm> {
         right: 16,
         top: 16,
       ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Add Your Review',
-              style: Theme.of(context).textTheme.titleLarge,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Your Name',
-                prefixIcon: Icon(Icons.person),
+      child: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Add Your Review',
+                style: Theme.of(context).textTheme.titleLarge,
+                textAlign: TextAlign.center,
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your name';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _reviewController,
-              decoration: const InputDecoration(
-                labelText: 'Your Review',
-                prefixIcon: Icon(Icons.rate_review),
+              const SizedBox(height: 16),
+              if (widget.errorMessage != null) ...[
+                Text(
+                  widget.errorMessage!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+              ],
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Your Name',
+                  prefixIcon: Icon(Icons.person),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your name';
+                  }
+                  return null;
+                },
               ),
-              maxLines: 4,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your review';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: widget.isSubmitting ? null : _submit,
-              child: widget.isSubmitting
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : const Text('Submit Review'),
-            ),
-            const SizedBox(height: 16),
-          ],
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _reviewController,
+                decoration: const InputDecoration(
+                  labelText: 'Your Review',
+                  prefixIcon: Icon(Icons.rate_review),
+                ),
+                maxLines: 4,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your review';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: widget.isSubmitting ? null : _submit,
+                child: widget.isSubmitting
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      )
+                    : const Text('Submit Review'),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );

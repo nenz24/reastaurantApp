@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import '../models/api_state.dart';
 import '../models/restaurant.dart';
 import '../services/restaurant_api_service.dart';
 
 class SearchProvider extends ChangeNotifier {
   final RestaurantApiService _apiService = RestaurantApiService();
-  
+
   ApiState<List<Restaurant>> _state = const Loading();
   ApiState<List<Restaurant>> get state => _state;
 
@@ -18,23 +19,23 @@ class SearchProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final List<Restaurant> restaurants;
       if (query.isEmpty) {
-        // Fetch all restaurants if query is empty
-        final restaurants = await _apiService.getRestaurantList();
-        _state = Success(restaurants);
+        restaurants = await _apiService.getRestaurantList();
       } else {
-        final restaurants = await _apiService.searchRestaurant(query);
-        _state = Success(restaurants);
+        restaurants = await _apiService.searchRestaurant(query);
       }
+      _state = Success(restaurants);
+    } on SocketException {
+      _state = const Error('No Internet connection');
     } catch (e) {
-      _state = Error(e.toString());
+      _state = const Error('Failed to search restaurants');
     }
     notifyListeners();
   }
 
   void clear() {
     _query = '';
-    searchRestaurants(''); // Load all restaurants instead of clearing
+    searchRestaurants('');
   }
-
 }

@@ -1,4 +1,3 @@
-// Model untuk Restaurant (list item)
 class Restaurant {
   final String id;
   final String name;
@@ -31,7 +30,6 @@ class Restaurant {
       'https://restaurant-api.dicoding.dev/images/medium/$pictureId';
 }
 
-// Model untuk Restaurant Detail
 class RestaurantDetail {
   final String id;
   final String name;
@@ -65,13 +63,15 @@ class RestaurantDetail {
       city: json['city'] ?? '',
       address: json['address'] ?? '',
       pictureId: json['pictureId'] ?? '',
-      categories: (json['categories'] as List?)
+      categories:
+          (json['categories'] as List?)
               ?.map((cat) => Category.fromJson(cat))
               .toList() ??
           [],
       menus: Menus.fromJson(json['menus'] ?? {}),
       rating: (json['rating'] ?? 0).toDouble(),
-      customerReviews: (json['customerReviews'] as List?)
+      customerReviews:
+          (json['customerReviews'] as List?)
               ?.map((review) => CustomerReview.fromJson(review))
               .toList() ??
           [],
@@ -82,7 +82,6 @@ class RestaurantDetail {
       'https://restaurant-api.dicoding.dev/images/large/$pictureId';
 }
 
-// Model untuk Category
 class Category {
   final String name;
 
@@ -93,7 +92,6 @@ class Category {
   }
 }
 
-// Model untuk Menus
 class Menus {
   final List<MenuItem> foods;
   final List<MenuItem> drinks;
@@ -102,11 +100,13 @@ class Menus {
 
   factory Menus.fromJson(Map<String, dynamic> json) {
     return Menus(
-      foods: (json['foods'] as List?)
+      foods:
+          (json['foods'] as List?)
               ?.map((food) => MenuItem.fromJson(food))
               .toList() ??
           [],
-      drinks: (json['drinks'] as List?)
+      drinks:
+          (json['drinks'] as List?)
               ?.map((drink) => MenuItem.fromJson(drink))
               .toList() ??
           [],
@@ -114,7 +114,6 @@ class Menus {
   }
 }
 
-// Model untuk Menu Item
 class MenuItem {
   final String name;
 
@@ -125,7 +124,6 @@ class MenuItem {
   }
 }
 
-// Model untuk Customer Review
 class CustomerReview {
   final String name;
   final String review;

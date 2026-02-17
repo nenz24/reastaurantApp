@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/restaurant.dart';
+import '../providers/favorite_provider.dart';
 
 class RestaurantCard extends StatelessWidget {
   final Restaurant restaurant;
@@ -110,6 +112,23 @@ class RestaurantCard extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            Consumer<FavoriteProvider>(
+              builder: (context, favoriteProvider, child) {
+                final isFav = favoriteProvider.isFavorite(restaurant.id);
+                return IconButton(
+                  onPressed: () {
+                    favoriteProvider.toggleFavorite(restaurant);
+                  },
+                  icon: Icon(
+                    isFav ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+                    color: isFav
+                        ? Colors.redAccent
+                        : Theme.of(context).disabledColor,
+                    size: 22,
+                  ),
+                );
+              },
             ),
           ],
         ),

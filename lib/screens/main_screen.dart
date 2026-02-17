@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/main_provider.dart';
 import 'restaurant_list_screen.dart';
 import 'favorite_screen.dart';
+import 'settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -16,6 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const RestaurantListScreen(),
     const FavoriteScreen(),
+    const SettingsScreen(),
   ];
 
   @override
@@ -41,13 +43,15 @@ class _MainScreenState extends State<MainScreen> {
               },
               elevation: 0,
               backgroundColor: Colors.transparent,
-              selectedItemColor:
-                  Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : Theme.of(context).primaryColor,
+              selectedItemColor: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Theme.of(context).primaryColor,
               unselectedItemColor: Theme.of(context).disabledColor,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
+              showSelectedLabels: true,
+              showUnselectedLabels: true,
+              type: BottomNavigationBarType.fixed,
+              selectedFontSize: 12,
+              unselectedFontSize: 12,
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(CupertinoIcons.house),
@@ -58,6 +62,11 @@ class _MainScreenState extends State<MainScreen> {
                   icon: Icon(CupertinoIcons.heart),
                   activeIcon: Icon(CupertinoIcons.heart_fill),
                   label: 'Favorites',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.settings),
+                  activeIcon: Icon(CupertinoIcons.settings_solid),
+                  label: 'Settings',
                 ),
               ],
             ),

@@ -92,4 +92,15 @@ class NotificationHelper {
       );
     }
   }
+
+  static Duration calculateInitialDelay() {
+    final now = DateTime.now();
+    var scheduledTime = DateTime(now.year, now.month, now.day, 11, 0);
+
+    if (now.isAfter(scheduledTime)) {
+      scheduledTime = scheduledTime.add(const Duration(days: 1));
+    }
+
+    return scheduledTime.difference(now);
+  }
 }

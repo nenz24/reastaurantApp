@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 import '../providers/theme_provider.dart';
 import '../providers/reminder_provider.dart';
+import '../services/notification_helper.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -91,13 +92,15 @@ class SettingsScreen extends StatelessWidget {
 
                             await reminderProvider.setReminder(value);
                             if (value) {
-                              await Workmanager().registerPeriodicTask(
+                              await Workmanager().registerOneOffTask(
                                 'daily_reminder',
                                 'dailyReminder',
-                                frequency: const Duration(hours: 24),
-                                initialDelay: _calculateInitialDelay(),
-                                existingWorkPolicy:
-                                    ExistingPeriodicWorkPolicy.replace,
+                                initialDelay:
+                                    NotificationHelper.calculateInitialDelay(),
+                                existingWorkPolicy: ExistingWorkPolicy.replace,
+                                constraints: Constraints(
+                                  networkType: NetworkType.connected,
+                                ),
                               );
                             } else {
                               await Workmanager().cancelByUniqueName(
@@ -120,17 +123,6 @@ class SettingsScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Duration _calculateInitialDelay() {
-    final now = DateTime.now();
-    var scheduledTime = DateTime(now.year, now.month, now.day, 11, 0);
-
-    if (now.isAfter(scheduledTime)) {
-      scheduledTime = scheduledTime.add(const Duration(days: 1));
-    }
-
-    return scheduledTime.difference(now);
   }
 
   void _showPermissionAlert(BuildContext context) {

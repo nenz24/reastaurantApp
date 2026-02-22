@@ -18,6 +18,14 @@ void callbackDispatcher() {
     if (task == 'dailyReminder') {
       await NotificationHelper.init();
       await NotificationHelper.showDailyReminderNotification();
+
+      await Workmanager().registerOneOffTask(
+        'daily_reminder',
+        'dailyReminder',
+        initialDelay: NotificationHelper.calculateInitialDelay(),
+        existingWorkPolicy: ExistingWorkPolicy.replace,
+        constraints: Constraints(networkType: NetworkType.connected),
+      );
     }
     return true;
   });

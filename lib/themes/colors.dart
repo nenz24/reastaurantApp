@@ -9,8 +9,6 @@ class AppColors {
   static const Color surfaceLight = Color(0xFFFFFFFF);
   static const Color textPrimaryLight = Color(0xFF212121);
   static const Color textSecondaryLight = Color(0xFF757575);
-
-  static const Color error = Color(0xFFB00020);
 }
 
 class AppColorsDark {

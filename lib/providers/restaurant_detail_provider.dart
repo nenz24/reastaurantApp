@@ -16,11 +16,6 @@ class RestaurantDetailProvider extends ChangeNotifier {
   String? _reviewError;
   String? get reviewError => _reviewError;
 
-  void clearReviewError() {
-    _reviewError = null;
-    notifyListeners();
-  }
-
   Future<void> fetchRestaurantDetail(String id) async {
     _state = const Loading();
     notifyListeners();

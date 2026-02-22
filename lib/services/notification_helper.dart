@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../models/restaurant.dart';
 import '../services/restaurant_api_service.dart';
 
@@ -27,15 +26,6 @@ class NotificationHelper {
         importance: Importance.max,
       ),
     );
-  }
-
-  static Future<bool> requestPermission() async {
-    final status = await Permission.notification.request();
-    return status.isGranted;
-  }
-
-  static Future<bool> isPermanentlyDenied() async {
-    return await Permission.notification.isPermanentlyDenied;
   }
 
   static Future<void> showDailyReminderNotification() async {

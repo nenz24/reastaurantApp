@@ -60,15 +60,15 @@ class AppTheme {
           fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryLight,
         ),
-        bodyLarge: GoogleFonts.roboto(
+        bodyLarge: GoogleFonts.nunitoSans(
           fontSize: 16,
           color: AppColors.textPrimaryLight,
         ),
-        bodyMedium: GoogleFonts.roboto(
+        bodyMedium: GoogleFonts.nunitoSans(
           fontSize: 14,
           color: AppColors.textSecondaryLight,
         ),
-        bodySmall: GoogleFonts.roboto(
+        bodySmall: GoogleFonts.nunitoSans(
           fontSize: 12,
           color: AppColors.textSecondaryLight,
         ),
@@ -167,15 +167,15 @@ class AppTheme {
               fontWeight: FontWeight.w500,
               color: AppColorsDark.textPrimaryDark,
             ),
-            bodyLarge: GoogleFonts.roboto(
+            bodyLarge: GoogleFonts.nunitoSans(
               fontSize: 16,
               color: AppColorsDark.textPrimaryDark,
             ),
-            bodyMedium: GoogleFonts.roboto(
+            bodyMedium: GoogleFonts.nunitoSans(
               fontSize: 14,
               color: AppColorsDark.textPrimaryDark,
             ),
-            bodySmall: GoogleFonts.roboto(
+            bodySmall: GoogleFonts.nunitoSans(
               fontSize: 12,
               color: AppColorsDark.textSecondaryDark,
             ),

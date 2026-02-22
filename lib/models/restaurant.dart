@@ -77,9 +77,6 @@ class RestaurantDetail {
           [],
     );
   }
-
-  String get imageUrl =>
-      'https://restaurant-api.dicoding.dev/images/large/$pictureId';
 }
 
 class Category {

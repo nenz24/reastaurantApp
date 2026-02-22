@@ -60,10 +60,4 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> maps = await db.query(_tableName);
     return maps.map((map) => Restaurant.fromJson(map)).toList();
   }
-
-  Future<bool> isFavorite(String id) async {
-    final db = await database;
-    final result = await db.query(_tableName, where: 'id = ?', whereArgs: [id]);
-    return result.isNotEmpty;
-  }
 }

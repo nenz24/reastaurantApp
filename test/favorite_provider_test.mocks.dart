@@ -75,12 +75,4 @@ class MockDatabaseHelper extends _i1.Mock implements _i3.DatabaseHelper {
             ),
           )
           as _i4.Future<List<_i5.Restaurant>>);
-
-  @override
-  _i4.Future<bool> isFavorite(String? id) =>
-      (super.noSuchMethod(
-            Invocation.method(#isFavorite, [id]),
-            returnValue: _i4.Future<bool>.value(false),
-          )
-          as _i4.Future<bool>);
 }
